@@ -1,11 +1,9 @@
 import api from '../lib/api'
-import type { Supplier } from '../types'
-
-export type CreateSupplierDto = Omit<Supplier, 'id' | 'createdAt'>
+import type { Supplier, CreateSupplierDto, UpdateSupplierDto, PaginatedResponse } from '../types'
 
 export const supplierService = {
-  getAll: async (): Promise<Supplier[]> => {
-    const { data } = await api.get<Supplier[]>('/suppliers')
+  getAll: async (params?: { page?: number; limit?: number; search?: string }): Promise<PaginatedResponse<Supplier>> => {
+    const { data } = await api.get<PaginatedResponse<Supplier>>('/suppliers', { params })
     return data
   },
 
@@ -19,7 +17,7 @@ export const supplierService = {
     return data
   },
 
-  update: async (id: string, supplier: Partial<Supplier>): Promise<Supplier> => {
+  update: async (id: string, supplier: UpdateSupplierDto): Promise<Supplier> => {
     const { data } = await api.patch<Supplier>(`/suppliers/${id}`, supplier)
     return data
   },

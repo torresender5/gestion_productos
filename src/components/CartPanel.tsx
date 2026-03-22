@@ -18,7 +18,7 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
   const navigate = useNavigate()
 
   const [clientId, setClientId] = useState('')
-  const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending'>('paid')
+  const [paymentStatus, setPaymentStatus] = useState<'PAID' | 'PENDING'>('PAID')
 
   const subtotal = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0)
   const tax = Math.round(subtotal * TAX_RATE)
@@ -37,12 +37,12 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
     }))
 
     try {
-      const invoice = await addSale(clientId, new Date().toISOString().split('T')[0], saleItems, paymentStatus)
+      const sale = await addSale({ clientId, items: saleItems, paymentStatus })
       clear()
       setClientId('')
-      setPaymentStatus('paid')
+      setPaymentStatus('PAID')
       onClose()
-      navigate(`/invoices?saleId=${invoice.saleId}`)
+      navigate(`/invoices`)
     } catch {
       // error se maneja en el store
     }
@@ -143,9 +143,9 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => setPaymentStatus('paid')}
+                    onClick={() => setPaymentStatus('PAID')}
                     className={`flex-1 py-2 text-sm font-medium rounded-lg border-2 transition-colors ${
-                      paymentStatus === 'paid'
+                      paymentStatus === 'PAID'
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
                     }`}
@@ -154,9 +154,9 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPaymentStatus('pending')}
+                    onClick={() => setPaymentStatus('PENDING')}
                     className={`flex-1 py-2 text-sm font-medium rounded-lg border-2 transition-colors ${
-                      paymentStatus === 'pending'
+                      paymentStatus === 'PENDING'
                         ? 'border-orange-500 bg-orange-50 text-orange-700'
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
                     }`}

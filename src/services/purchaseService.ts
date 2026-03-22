@@ -1,17 +1,14 @@
 import api from '../lib/api'
-import type { Purchase, PurchaseItem } from '../types'
-
-export interface CreatePurchaseDto {
-  supplierId: string
-  supplier: string
-  date: string
-  items: PurchaseItem[]
-  paymentStatus: 'paid' | 'pending'
-}
+import type { Purchase, CreatePurchaseDto, PaginatedResponse } from '../types'
 
 export const purchaseService = {
-  getAll: async (): Promise<Purchase[]> => {
-    const { data } = await api.get<Purchase[]>('/purchases')
+  getAll: async (params?: { page?: number; limit?: number; paymentStatus?: 'PAID' | 'PENDING' }): Promise<PaginatedResponse<Purchase>> => {
+    const { data } = await api.get<PaginatedResponse<Purchase>>('/purchases', { params })
+    return data
+  },
+
+  getById: async (id: string): Promise<Purchase> => {
+    const { data } = await api.get<Purchase>(`/purchases/${id}`)
     return data
   },
 
@@ -20,8 +17,12 @@ export const purchaseService = {
     return data
   },
 
-  updatePaymentStatus: async (id: string, status: 'paid' | 'pending'): Promise<Purchase> => {
-    const { data } = await api.patch<Purchase>(`/purchases/${id}`, { paymentStatus: status })
+  updatePaymentStatus: async (id: string): Promise<Purchase> => {
+    const { data } = await api.patch<Purchase>(`/purchases/${id}/payment`)
     return data
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/purchases/${id}`)
   },
 }

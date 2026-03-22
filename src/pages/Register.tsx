@@ -5,7 +5,7 @@ import { useAuthStore } from '../stores/authStore'
 
 export default function Register() {
   const register = useAuthStore((s) => s.register)
-  const loading = useAuthStore((s) => s.loading)
+  const isLoading = useAuthStore((s) => s.isLoading)
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -101,11 +101,11 @@ export default function Register() {
             </div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-              {loading ? 'Creando...' : 'Crear Cuenta'}
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              {isLoading ? 'Creando...' : 'Crear Cuenta'}
             </button>
           </form>
 

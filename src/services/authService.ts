@@ -1,69 +1,40 @@
 import api from '../lib/api'
+import type { AuthResponse, LoginDto, RegisterDto } from '../types'
 
 export interface AuthUser {
   id: string
   name: string
   email: string
-  role: 'admin' | 'user'
+  role: 'ADMIN' | 'USER'
   createdAt: string
 }
 
-export interface LoginResponse {
-  user: AuthUser
-  token: string
-}
-
-export interface RegisterDto {
-  user?: string
-  name?: string
-  email: string
-  password: string
-}
-
 export const authService = {
-  login: async (email: string, password: string): Promise<LoginResponse> => {
-    const { data } = await api.post<LoginResponse>('/auth/login', { email, password })
-    if (data.token) {
-      localStorage.setItem('auth-token', data.token)
+  login: async (dto: LoginDto): Promise<AuthResponse> => {
+    const { data } = await api.post<AuthResponse>('/auth/login', dto)
+    if (data.accessToken) {
+      localStorage.setItem('auth-token', data.accessToken)
     }
     return data
   },
 
-  register: async (dto: RegisterDto): Promise<LoginResponse> => {
-    try {
-      dto.user = dto.name
-      const { data } = await api.post<LoginResponse>('/auth/register', dto)
-      console.log(data)
-      if (data.token) {
-        localStorage.setItem('auth-token', data.token)
-      }
-      return data
-    } catch (error) {
-      console.error('Registration error:', error)
-      throw error
+  register: async (dto: RegisterDto): Promise<AuthResponse> => {
+    const { data } = await api.post<AuthResponse>('/auth/register', dto)
+    if (data.accessToken) {
+      localStorage.setItem('auth-token', data.accessToken)
     }
+    return data
   },
 
   logout: () => {
     localStorage.removeItem('auth-token')
   },
 
-  getMe: async (): Promise<AuthUser> => {
-    const { data } = await api.get<AuthUser>('/auth/me')
+  refreshToken: async (refreshToken: string): Promise<AuthResponse> => {
+    const { data } = await api.post<AuthResponse>('/auth/refresh', { refreshToken })
+    if (data.accessToken) {
+      localStorage.setItem('auth-token', data.accessToken)
+    }
     return data
-  },
-
-  getUsers: async (): Promise<AuthUser[]> => {
-    const { data } = await api.get<AuthUser[]>('/users')
-    return data
-  },
-
-  updateUser: async (id: string, updates: Partial<AuthUser & { password: string }>): Promise<AuthUser> => {
-    const { data } = await api.patch<AuthUser>(`/users/${id}`, updates)
-    return data
-  },
-
-  deleteUser: async (id: string): Promise<void> => {
-    await api.delete(`/users/${id}`)
   },
 }

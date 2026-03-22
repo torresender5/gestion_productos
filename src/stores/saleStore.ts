@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Sale, SaleItem, Invoice } from '../types'
+import type { Sale, CreateSaleDto, Invoice } from '../types'
 import { saleService, invoiceService } from '../services/saleService'
 import { useProductStore } from './productStore'
 
@@ -10,9 +10,9 @@ interface SaleStore {
   error: string | null
   fetchSales: () => Promise<void>
   fetchInvoices: () => Promise<void>
-  addSale: (clientId: string, date: string, items: SaleItem[], paymentStatus: 'paid' | 'pending') => Promise<Invoice>
-  updateSalePaymentStatus: (id: string, status: 'paid' | 'pending') => Promise<void>
-  updateInvoiceStatus: (id: string, status: 'paid' | 'pending') => Promise<void>
+  addSale: (sale: CreateSaleDto) => Promise<Sale>
+  updateSalePaymentStatus: (id: string) => Promise<void>
+  updateInvoiceStatus: (id: string, status: 'PAID' | 'PENDING') => Promise<void>
 }
 
 export const useSaleStore = create<SaleStore>()((set) => ({
@@ -24,8 +24,8 @@ export const useSaleStore = create<SaleStore>()((set) => ({
   fetchSales: async () => {
     set({ loading: true, error: null })
     try {
-      const sales = await saleService.getAll()
-      set({ sales, loading: false })
+      const response = await saleService.getAll()
+      set({ sales: response.data, loading: false })
     } catch {
       set({ error: 'Error al cargar ventas', loading: false })
     }
@@ -34,43 +34,38 @@ export const useSaleStore = create<SaleStore>()((set) => ({
   fetchInvoices: async () => {
     set({ loading: true, error: null })
     try {
-      const invoices = await invoiceService.getAll()
-      set({ invoices, loading: false })
+      const response = await invoiceService.getAll()
+      set({ invoices: response.data, loading: false })
     } catch {
       set({ error: 'Error al cargar facturas', loading: false })
     }
   },
 
-  addSale: async (clientId, date, items, paymentStatus) => {
+  addSale: async (sale) => {
     set({ loading: true, error: null })
     try {
-      const { sale, invoice } = await saleService.create({ clientId, date, items, paymentStatus })
-      // Reducir stock local
+      const newSale = await saleService.create(sale)
       const { updateStock } = useProductStore.getState()
-      for (const item of items) {
+      for (const item of sale.items) {
         await updateStock(item.productId, -item.quantity)
       }
       set((state) => ({
-        sales: [...state.sales, sale],
-        invoices: [...state.invoices, invoice],
+        sales: [...state.sales, newSale],
         loading: false,
       }))
-      return invoice
+      return newSale
     } catch {
       set({ error: 'Error al registrar venta', loading: false })
       throw new Error('Error al registrar venta')
     }
   },
 
-  updateSalePaymentStatus: async (saleId, status) => {
+  updateSalePaymentStatus: async (id) => {
     set({ loading: true, error: null })
     try {
-      const updated = await saleService.updatePaymentStatus(saleId, status)
+      const updated = await saleService.updatePaymentStatus(id)
       set((state) => ({
-        sales: state.sales.map((s) => (s.id === saleId ? updated : s)),
-        invoices: state.invoices.map((inv) =>
-          inv.saleId === saleId ? { ...inv, status } : inv
-        ),
+        sales: state.sales.map((s) => (s.id === id ? updated : s)),
         loading: false,
       }))
     } catch {

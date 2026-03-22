@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { Product } from '../types'
-import { productService, type CreateProductDto } from '../services/productService'
+import type { Product, CreateProductDto } from '../types'
+import { productService } from '../services/productService'
 
 interface ProductStore {
   products: Product[]
@@ -21,9 +21,9 @@ export const useProductStore = create<ProductStore>()((set) => ({
   fetchProducts: async () => {
     set({ loading: true, error: null })
     try {
-      const products = await productService.getAll()
-      set({ products, loading: false })
-    } catch (error) {
+      const response = await productService.getAll()
+      set({ products: response.data, loading: false })
+    } catch {
       set({ error: 'Error al cargar productos', loading: false })
     }
   },
@@ -33,9 +33,9 @@ export const useProductStore = create<ProductStore>()((set) => ({
     try {
       const newProduct = await productService.create(product)
       set((state) => ({ products: [...state.products, newProduct], loading: false }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al crear producto', loading: false })
-      throw error
+      throw new Error('Error al crear producto')
     }
   },
 
@@ -47,9 +47,9 @@ export const useProductStore = create<ProductStore>()((set) => ({
         products: state.products.map((p) => (p.id === id ? updated : p)),
         loading: false,
       }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al actualizar producto', loading: false })
-      throw error
+      throw new Error('Error al actualizar producto')
     }
   },
 
@@ -61,9 +61,9 @@ export const useProductStore = create<ProductStore>()((set) => ({
         products: state.products.filter((p) => p.id !== id),
         loading: false,
       }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al eliminar producto', loading: false })
-      throw error
+      throw new Error('Error al eliminar producto')
     }
   },
 
@@ -77,9 +77,9 @@ export const useProductStore = create<ProductStore>()((set) => ({
         products: state.products.map((p) => (p.id === id ? updated : p)),
         loading: false,
       }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al actualizar stock', loading: false })
-      throw error
+      throw new Error('Error al actualizar stock')
     }
   },
 }))

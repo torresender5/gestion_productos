@@ -31,9 +31,9 @@ function groupSalesByPeriod(sales: Sale[], period: Period) {
 
     switch (period) {
       case 'day':
-        key = sale.date
+        key = date.toISOString().split('T')[0]
         label = date.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' })
-        sortKey = sale.date
+        sortKey = date.toISOString().split('T')[0]
         break
       case 'week':
         key = getWeekLabel(date)
@@ -85,28 +85,30 @@ export default function Dashboard() {
 
   const totalPurchases = purchases.reduce((sum, p) => sum + p.total, 0)
   const totalSales = sales.reduce((sum, s) => sum + s.total, 0)
-  const pendingInvoices = invoices.filter((i) => i.status === 'pending').length
+  const pendingInvoices = invoices.filter((i) => i.status === 'PENDING').length
   const lowStock = products.filter((p) => p.stock < 10).length
 
   const chartData = useMemo(() => groupSalesByPeriod(sales, period), [sales, period])
 
   // Cuentas por pagar (compras pendientes agrupadas por proveedor)
   const accountsPayable = useMemo(() => {
-    const pending = purchases.filter((p) => (p.paymentStatus ?? 'paid') === 'pending')
+    const pending = purchases.filter((p) => (p.paymentStatus ?? 'PENDING') === 'PENDING')
     const map: Record<string, { supplier: string; total: number }> = {}
     for (const p of pending) {
-      if (!map[p.supplier]) map[p.supplier] = { supplier: p.supplier, total: 0 }
-      map[p.supplier].total += p.total
+      const supplierName = p.supplier?.name ?? 'Proveedor'
+      if (!map[p.supplierId]) map[p.supplierId] = { supplier: supplierName, total: 0 }
+      map[p.supplierId].total += p.total
     }
     return Object.values(map).sort((a, b) => b.total - a.total)
   }, [purchases])
 
   // Cuentas por cobrar (ventas pendientes agrupadas por cliente)
   const accountsReceivable = useMemo(() => {
-    const pending = sales.filter((s) => (s.paymentStatus ?? 'paid') === 'pending')
+    const pending = sales.filter((s) => (s.paymentStatus ?? 'PENDING') === 'PENDING')
     const map: Record<string, { clientName: string; total: number }> = {}
     for (const s of pending) {
-      if (!map[s.clientId]) map[s.clientId] = { clientName: s.clientName, total: 0 }
+      const clientName = s.client?.name ?? 'Cliente'
+      if (!map[s.clientId]) map[s.clientId] = { clientName, total: 0 }
       map[s.clientId].total += s.total
     }
     return Object.values(map).sort((a, b) => b.total - a.total)

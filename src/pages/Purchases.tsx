@@ -13,9 +13,8 @@ export default function Purchases() {
   const { purchases, loading, error, fetchPurchases, addPurchase } = usePurchaseStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [supplierId, setSupplierId] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending'>('paid')
   const [items, setItems] = useState<PurchaseItem[]>([])
+  const [paymentStatus, setPaymentStatus] = useState<'PAID' | 'PENDING'>('PENDING')
 
   useEffect(() => {
     fetchProducts()
@@ -46,17 +45,24 @@ export default function Purchases() {
 
   const removeItem = (index: number) => setItems(items.filter((_, i) => i !== index))
 
-  const total = items.reduce((sum, item) => sum + item.subtotal, 0)
+  const total = items.reduce((sum, item) => sum + (item.subtotal ?? 0), 0)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (items.length === 0 || !supplierId) return
     try {
-      const supplier = suppliers.find((s) => s.id === supplierId)
-      await addPurchase(supplierId, supplier?.name || '', date, items, paymentStatus)
+      await addPurchase({
+        supplierId,
+        items: items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+        })),
+        paymentStatus,
+      })
       setIsModalOpen(false)
       setSupplierId('')
-      setPaymentStatus('paid')
+      setPaymentStatus('PENDING')
       setItems([])
     } catch {
       // error se maneja en el store
@@ -99,15 +105,15 @@ export default function Purchases() {
             ) : (
               [...purchases].reverse().map((p) => (
                 <tr key={p.id} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="p-4 font-medium">{p.supplier}</td>
-                  <td className="p-4 text-gray-500">{formatDate(p.date)}</td>
+                  <td className="p-4 font-medium">{p.supplier?.name}</td>
+                  <td className="p-4 text-gray-500">{formatDate(new Date(p.date))}</td>
                   <td className="p-4 text-right">{p.items.length}</td>
                   <td className="p-4 text-right font-medium">{formatCurrency(p.total)}</td>
                   <td className="p-4 text-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      (p.paymentStatus ?? 'paid') === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                      p.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                     }`}>
-                      {(p.paymentStatus ?? 'paid') === 'paid' ? 'Pagado' : 'Por pagar'}
+                      {p.paymentStatus === 'PAID' ? 'Pagado' : 'Por pagar'}
                     </span>
                   </td>
                 </tr>
@@ -129,28 +135,23 @@ export default function Purchases() {
                 {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name} - {s.document}</option>)}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Fecha *</label>
-              <input required type="date" value={date} onChange={(e) => setDate(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Estado de Pago *</label>
             <div className="flex gap-3">
               <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                paymentStatus === 'paid' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-gray-300'
+                paymentStatus === 'PAID' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-gray-300'
               }`}>
-                <input type="radio" name="paymentStatus" value="paid" checked={paymentStatus === 'paid'}
-                  onChange={() => setPaymentStatus('paid')} className="sr-only" />
+                <input type="radio" name="paymentStatus" value="PAID" checked={paymentStatus === 'PAID'}
+                  onChange={() => setPaymentStatus('PAID')} className="sr-only" />
                 <span className="text-sm font-medium">Pagado</span>
               </label>
               <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                paymentStatus === 'pending' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 hover:border-gray-300'
+                paymentStatus === 'PENDING' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 hover:border-gray-300'
               }`}>
-                <input type="radio" name="paymentStatus" value="pending" checked={paymentStatus === 'pending'}
-                  onChange={() => setPaymentStatus('pending')} className="sr-only" />
+                <input type="radio" name="paymentStatus" value="PENDING" checked={paymentStatus === 'PENDING'}
+                  onChange={() => setPaymentStatus('PENDING')} className="sr-only" />
                 <span className="text-sm font-medium">Por Pagar</span>
               </label>
             </div>
@@ -194,7 +195,7 @@ export default function Purchases() {
                           <input type="number" min={0} value={item.unitPrice} onChange={(e) => updateItem(i, 'unitPrice', Number(e.target.value))}
                             className="w-28 border rounded px-2 py-1 text-sm text-right ml-auto block" />
                         </td>
-                        <td className="p-3 text-right font-medium">{formatCurrency(item.subtotal)}</td>
+                        <td className="p-3 text-right font-medium">{formatCurrency(item.subtotal ?? 0)}</td>
                         <td className="p-3">
                           <button type="button" onClick={() => removeItem(i)} className="text-red-500 hover:text-red-700">
                             <Trash2 className="w-4 h-4" />
