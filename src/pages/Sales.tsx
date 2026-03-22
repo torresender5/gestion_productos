@@ -16,7 +16,7 @@ export default function Sales() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [clientId, setClientId] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [paymentStatus, setPaymentStatus] = useState<'paid' | 'pending'>('paid')
+  const [paymentStatus, setPaymentStatus] = useState<'PAID' | 'PENDING'>('PAID')
   const [items, setItems] = useState<SaleItem[]>([])
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function Sales() {
 
   const removeItem = (index: number) => setItems(items.filter((_, i) => i !== index))
 
-  const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0)
+  const subtotal = items.reduce((sum, item) => sum + (item.subtotal ?? 0), 0)
   const tax = Math.round(subtotal * TAX_RATE)
   const total = subtotal + tax
 
@@ -64,10 +64,10 @@ export default function Sales() {
     e.preventDefault()
     if (items.length === 0 || !clientId) return
     try {
-      await addSale(clientId, date, items, paymentStatus)
+      await addSale({ clientId, items, paymentStatus })
       setIsModalOpen(false)
       setClientId('')
-      setPaymentStatus('paid')
+      setPaymentStatus('PAID')
       setItems([])
     } catch {
       // error se maneja en el store
@@ -113,17 +113,17 @@ export default function Sales() {
             ) : (
               [...sales].reverse().map((s) => (
                 <tr key={s.id} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="p-4 font-medium">{s.clientName}</td>
-                  <td className="p-4 text-gray-500">{formatDate(s.date)}</td>
+                  <td className="p-4 font-medium">{s.client?.name || 'Cliente'}</td>
+                  <td className="p-4 text-gray-500">{formatDate(new Date(s.date))}</td>
                   <td className="p-4 text-right">{s.items.length}</td>
                   <td className="p-4 text-right">{formatCurrency(s.subtotal)}</td>
                   <td className="p-4 text-right text-gray-500">{formatCurrency(s.tax)}</td>
                   <td className="p-4 text-right font-medium">{formatCurrency(s.total)}</td>
                   <td className="p-4 text-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      (s.paymentStatus ?? 'paid') === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                      s.paymentStatus === 'PAID' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                     }`}>
-                      {(s.paymentStatus ?? 'paid') === 'paid' ? 'Pagado' : 'Por cobrar'}
+                      {s.paymentStatus === 'PAID' ? 'Pagado' : 'Por cobrar'}
                     </span>
                   </td>
                   <td className="p-4 text-right">
@@ -165,17 +165,17 @@ export default function Sales() {
             <label className="block text-sm font-medium mb-1">Estado de Pago *</label>
             <div className="flex gap-3">
               <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                paymentStatus === 'paid' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-gray-300'
+                paymentStatus === 'PAID' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-gray-300'
               }`}>
-                <input type="radio" name="paymentStatus" value="paid" checked={paymentStatus === 'paid'}
-                  onChange={() => setPaymentStatus('paid')} className="sr-only" />
+                <input type="radio" name="paymentStatus" value="PAID" checked={paymentStatus === 'PAID'}
+                  onChange={() => setPaymentStatus('PAID')} className="sr-only" />
                 <span className="text-sm font-medium">Pagado</span>
               </label>
               <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                paymentStatus === 'pending' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 hover:border-gray-300'
+                paymentStatus === 'PENDING' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 hover:border-gray-300'
               }`}>
-                <input type="radio" name="paymentStatus" value="pending" checked={paymentStatus === 'pending'}
-                  onChange={() => setPaymentStatus('pending')} className="sr-only" />
+                <input type="radio" name="paymentStatus" value="PENDING" checked={paymentStatus === 'PENDING'}
+                  onChange={() => setPaymentStatus('PENDING')} className="sr-only" />
                 <span className="text-sm font-medium">Por Cobrar</span>
               </label>
             </div>
@@ -224,7 +224,7 @@ export default function Sales() {
                             <input type="number" min={0} value={item.unitPrice} onChange={(e) => updateItem(i, 'unitPrice', Number(e.target.value))}
                               className="w-28 border rounded px-2 py-1 text-sm text-right ml-auto block" />
                           </td>
-                          <td className="p-3 text-right font-medium">{formatCurrency(item.subtotal)}</td>
+                          <td className="p-3 text-right font-medium">{formatCurrency(item.subtotal ?? 0)}</td>
                           <td className="p-3">
                             <button type="button" onClick={() => removeItem(i)} className="text-red-500 hover:text-red-700">
                               <Trash2 className="w-4 h-4" />

@@ -11,7 +11,7 @@ export default function AccountsReceivable() {
   }, [])
 
   const pendingSales = useMemo(
-    () => sales.filter((s) => (s.paymentStatus ?? 'paid') === 'pending'),
+    () => sales.filter((s) => s.paymentStatus === 'PENDING'),
     [sales]
   )
 
@@ -20,7 +20,7 @@ export default function AccountsReceivable() {
     for (const s of pendingSales) {
       const key = s.clientId
       if (!map[key]) {
-        map[key] = { clientName: s.clientName, total: 0, sales: [] }
+        map[key] = { clientName: s.client?.name || 'Cliente', total: 0, sales: [] }
       }
       map[key].total += s.total
       map[key].sales.push(s)
@@ -68,12 +68,12 @@ export default function AccountsReceivable() {
                   <tbody>
                     {clientSales.map((s) => (
                       <tr key={s.id} className="border-t hover:bg-gray-50">
-                        <td className="p-3">{formatDate(s.date)}</td>
+                        <td className="p-3">{formatDate(new Date(s.date))}</td>
                         <td className="p-3 text-right">{s.items.length}</td>
                         <td className="p-3 text-right font-medium">{formatCurrency(s.total)}</td>
                         <td className="p-3 text-center">
                           <button
-                            onClick={() => updateSalePaymentStatus(s.id, 'paid')}
+                            onClick={() => updateSalePaymentStatus(s.id)}
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
                           >
                             <CheckCircle className="w-3.5 h-3.5" />

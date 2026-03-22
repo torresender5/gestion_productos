@@ -67,7 +67,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {links
-            .filter((link) => !('adminOnly' in link && link.adminOnly) || user?.role === 'admin')
+            .filter((link) => !('adminOnly' in link && link.adminOnly) || user?.role === 'ADMIN')
             .map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
@@ -92,8 +92,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <UserCircle className="w-5 h-5 text-slate-400 shrink-0" />
             <div className="min-w-0">
               <span className="text-slate-300 truncate block">{user?.name}</span>
-              <span className={`text-xs ${user?.role === 'admin' ? 'text-purple-400' : 'text-slate-500'}`}>
-                {user?.role === 'admin' ? 'Administrador' : 'Usuario'}
+              <span className={`text-xs ${user?.role === 'ADMIN' ? 'text-purple-400' : 'text-slate-500'}`}>
+                {user?.role === 'ADMIN' ? 'Administrador' : 'Usuario'}
               </span>
             </div>
           </div>

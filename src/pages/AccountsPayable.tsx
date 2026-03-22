@@ -11,18 +11,19 @@ export default function AccountsPayable() {
   }, [])
 
   const pendingPurchases = useMemo(
-    () => purchases.filter((p) => (p.paymentStatus ?? 'paid') === 'pending'),
+    () => purchases.filter((p) => p.paymentStatus === 'PENDING'),
     [purchases]
   )
 
   const groupedBySupplier = useMemo(() => {
     const map: Record<string, { supplier: string; total: number; purchases: typeof pendingPurchases }> = {}
     for (const p of pendingPurchases) {
-      if (!map[p.supplier]) {
-        map[p.supplier] = { supplier: p.supplier, total: 0, purchases: [] }
+      const supplierName = p.supplier?.name || 'Proveedor'
+      if (!map[supplierName]) {
+        map[supplierName] = { supplier: supplierName, total: 0, purchases: [] }
       }
-      map[p.supplier].total += p.total
-      map[p.supplier].purchases.push(p)
+      map[supplierName].total += p.total
+      map[supplierName].purchases.push(p)
     }
     return Object.values(map).sort((a, b) => b.total - a.total)
   }, [pendingPurchases])
@@ -67,12 +68,12 @@ export default function AccountsPayable() {
                   <tbody>
                     {supplierPurchases.map((p) => (
                       <tr key={p.id} className="border-t hover:bg-gray-50">
-                        <td className="p-3">{formatDate(p.date)}</td>
+                        <td className="p-3">{formatDate(new Date(p.date))}</td>
                         <td className="p-3 text-right">{p.items.length}</td>
                         <td className="p-3 text-right font-medium">{formatCurrency(p.total)}</td>
                         <td className="p-3 text-center">
                           <button
-                            onClick={() => updatePurchasePaymentStatus(p.id, 'paid')}
+                            onClick={() => updatePurchasePaymentStatus(p.id)}
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
                           >
                             <CheckCircle className="w-3.5 h-3.5" />

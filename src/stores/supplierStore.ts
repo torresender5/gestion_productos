@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { Supplier } from '../types'
-import { supplierService, type CreateSupplierDto } from '../services/supplierService'
+import type { Supplier, CreateSupplierDto } from '../types'
+import { supplierService } from '../services/supplierService'
 
 interface SupplierStore {
   suppliers: Supplier[]
@@ -20,8 +20,8 @@ export const useSupplierStore = create<SupplierStore>()((set) => ({
   fetchSuppliers: async () => {
     set({ loading: true, error: null })
     try {
-      const suppliers = await supplierService.getAll()
-      set({ suppliers, loading: false })
+      const response = await supplierService.getAll()
+      set({ suppliers: response.data, loading: false })
     } catch {
       set({ error: 'Error al cargar proveedores', loading: false })
     }

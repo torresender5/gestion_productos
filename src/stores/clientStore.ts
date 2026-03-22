@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { Client } from '../types'
-import { clientService, type CreateClientDto } from '../services/clientService'
+import type { Client, CreateClientDto } from '../types'
+import { clientService } from '../services/clientService'
 
 interface ClientStore {
   clients: Client[]
@@ -20,9 +20,9 @@ export const useClientStore = create<ClientStore>()((set) => ({
   fetchClients: async () => {
     set({ loading: true, error: null })
     try {
-      const clients = await clientService.getAll()
-      set({ clients, loading: false })
-    } catch (error) {
+      const response = await clientService.getAll()
+      set({ clients: response.data, loading: false })
+    } catch {
       set({ error: 'Error al cargar clientes', loading: false })
     }
   },
@@ -32,9 +32,9 @@ export const useClientStore = create<ClientStore>()((set) => ({
     try {
       const newClient = await clientService.create(client)
       set((state) => ({ clients: [...state.clients, newClient], loading: false }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al crear cliente', loading: false })
-      throw error
+      throw new Error('Error al crear cliente')
     }
   },
 
@@ -46,9 +46,9 @@ export const useClientStore = create<ClientStore>()((set) => ({
         clients: state.clients.map((c) => (c.id === id ? updated : c)),
         loading: false,
       }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al actualizar cliente', loading: false })
-      throw error
+      throw new Error('Error al actualizar cliente')
     }
   },
 
@@ -60,9 +60,9 @@ export const useClientStore = create<ClientStore>()((set) => ({
         clients: state.clients.filter((c) => c.id !== id),
         loading: false,
       }))
-    } catch (error) {
+    } catch {
       set({ error: 'Error al eliminar cliente', loading: false })
-      throw error
+      throw new Error('Error al eliminar cliente')
     }
   },
 }))
