@@ -49,8 +49,10 @@ export const useSaleStore = create<SaleStore>()((set) => ({
       for (const item of sale.items) {
         await updateStock(item.productId, -item.quantity)
       }
+      const newInvoice = await invoiceService.generateFromSale(newSale.id)
       set((state) => ({
         sales: [...state.sales, newSale],
+        invoices: [...state.invoices, newInvoice],
         loading: false,
       }))
       return newSale

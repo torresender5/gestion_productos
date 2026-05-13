@@ -118,25 +118,25 @@ export default function Dashboard() {
   const totalReceivable = accountsReceivable.reduce((sum, a) => sum + a.total, 0)
 
   const cards = [
-    { label: 'Productos', value: products.length, icon: Package, color: 'bg-blue-500' },
-    { label: 'Clientes', value: clients.length, icon: Users, color: 'bg-green-500' },
-    { label: 'Compras', value: formatCurrency(totalPurchases), icon: ShoppingCart, color: 'bg-orange-500' },
-    { label: 'Ventas', value: formatCurrency(totalSales), icon: TrendingUp, color: 'bg-purple-500' },
-    { label: 'Facturas Pendientes', value: pendingInvoices, icon: FileText, color: 'bg-red-500' },
+    { label: 'Productos', value: products.length, icon: Package, color: 'bg-primary' },
+    { label: 'Clientes', value: clients.length, icon: Users, color: 'bg-accent' },
+    { label: 'Compras', value: formatCurrency(totalPurchases), icon: ShoppingCart, color: 'bg-secondary' },
+    { label: 'Ventas', value: formatCurrency(totalSales), icon: TrendingUp, color: 'bg-primary' },
+    { label: 'Facturas Pendientes', value: pendingInvoices, icon: FileText, color: 'bg-destructive' },
     { label: 'Stock Bajo (<10)', value: lowStock, icon: DollarSign, color: 'bg-yellow-500' },
   ]
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-6 dark:text-white">Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-white rounded-xl shadow-sm border p-6 flex items-center gap-4">
+          <div key={label} className="card flex items-center gap-4">
             <div className={`${color} p-3 rounded-lg`}>
               <Icon className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">{label}</p>
+              <p className="text-sm text-muted-foreground">{label}</p>
               <p className="text-2xl font-bold">{value}</p>
             </div>
           </div>
@@ -144,18 +144,18 @@ export default function Dashboard() {
       </div>
 
       {/* Period selector + Charts */}
-      <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
+      <div className="mt-8 card">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold">Gráficas de Ventas</h2>
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex gap-1 bg-muted rounded-lg p-1">
             {(['day', 'week', 'month'] as Period[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
                   period === p
-                    ? 'bg-white text-purple-700 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-surface text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {periodLabels[p]}
@@ -165,35 +165,35 @@ export default function Dashboard() {
         </div>
 
         {chartData.length === 0 ? (
-          <p className="text-gray-500 text-center py-10">No hay datos de ventas para mostrar.</p>
+          <p className="text-muted-foreground text-center py-10">No hay datos de ventas para mostrar.</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Número de ventas */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 mb-3">Número de Ventas</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3">Número de Ventas</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <XAxis dataKey="label" tick={{ fontSize: 12 }} stroke="var(--color-muted-foreground)" />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 12 }} stroke="var(--color-muted-foreground)" />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="count" name="Ventas" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" name="Ventas" fill="var(--color-accent)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
 
             {/* Monto de ventas */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 mb-3">Monto de Ventas</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3">Monto de Ventas</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-                  <YAxis tickFormatter={currencyFormatter} tick={{ fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <XAxis dataKey="label" tick={{ fontSize: 12 }} stroke="var(--color-muted-foreground)" />
+                  <YAxis tickFormatter={currencyFormatter} tick={{ fontSize: 12 }} stroke="var(--color-muted-foreground)" />
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} />
                   <Legend />
-                  <Bar dataKey="amount" name="Monto" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="amount" name="Monto" fill="var(--color-secondary)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -204,31 +204,31 @@ export default function Dashboard() {
       {/* Cuentas por Pagar y Cobrar */}
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cuentas por Pagar */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-orange-500" />
               <h2 className="text-lg font-semibold">Cuentas por Pagar</h2>
             </div>
-            <Link to="/accounts-payable" className="text-sm text-blue-600 hover:text-blue-700">Ver todo</Link>
+            <Link to="/accounts-payable" className="text-sm text-accent hover:underline">Ver todo</Link>
           </div>
           {accountsPayable.length === 0 ? (
-            <p className="text-gray-500 text-sm">No hay cuentas por pagar pendientes.</p>
+            <p className="text-muted-foreground text-sm">No hay cuentas por pagar pendientes.</p>
           ) : (
             <>
               <div className="space-y-2 mb-3">
                 {accountsPayable.slice(0, 5).map(({ supplier, total }) => (
-                  <div key={supplier} className="flex justify-between items-center py-2 border-b last:border-0">
+                  <div key={supplier} className="flex justify-between items-center py-2 border-b border-border last:border-0">
                     <span className="font-medium text-sm">{supplier}</span>
                     <span className="text-sm font-semibold text-orange-600">{formatCurrency(total)}</span>
                   </div>
                 ))}
                 {accountsPayable.length > 5 && (
-                  <p className="text-xs text-gray-400">y {accountsPayable.length - 5} más...</p>
+                  <p className="text-xs text-muted-foreground">y {accountsPayable.length - 5} más...</p>
                 )}
               </div>
-              <div className="pt-3 border-t flex justify-between items-center">
-                <span className="text-sm text-gray-500">Total adeudado</span>
+              <div className="pt-3 border-t border-border flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total adeudado</span>
                 <span className="text-lg font-bold text-orange-600">{formatCurrency(totalPayable)}</span>
               </div>
             </>
@@ -236,31 +236,31 @@ export default function Dashboard() {
         </div>
 
         {/* Cuentas por Cobrar */}
-        <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <HandCoins className="w-5 h-5 text-blue-500" />
               <h2 className="text-lg font-semibold">Cuentas por Cobrar</h2>
             </div>
-            <Link to="/accounts-receivable" className="text-sm text-blue-600 hover:text-blue-700">Ver todo</Link>
+            <Link to="/accounts-receivable" className="text-sm text-accent hover:underline">Ver todo</Link>
           </div>
           {accountsReceivable.length === 0 ? (
-            <p className="text-gray-500 text-sm">No hay cuentas por cobrar pendientes.</p>
+            <p className="text-muted-foreground text-sm">No hay cuentas por cobrar pendientes.</p>
           ) : (
             <>
               <div className="space-y-2 mb-3">
                 {accountsReceivable.slice(0, 5).map(({ clientName, total }) => (
-                  <div key={clientName} className="flex justify-between items-center py-2 border-b last:border-0">
+                  <div key={clientName} className="flex justify-between items-center py-2 border-b border-border last:border-0">
                     <span className="font-medium text-sm">{clientName}</span>
                     <span className="text-sm font-semibold text-blue-600">{formatCurrency(total)}</span>
                   </div>
                 ))}
                 {accountsReceivable.length > 5 && (
-                  <p className="text-xs text-gray-400">y {accountsReceivable.length - 5} más...</p>
+                  <p className="text-xs text-muted-foreground">y {accountsReceivable.length - 5} más...</p>
                 )}
               </div>
-              <div className="pt-3 border-t flex justify-between items-center">
-                <span className="text-sm text-gray-500">Total por cobrar</span>
+              <div className="pt-3 border-t border-border flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total por cobrar</span>
                 <span className="text-lg font-bold text-blue-600">{formatCurrency(totalReceivable)}</span>
               </div>
             </>
@@ -269,16 +269,16 @@ export default function Dashboard() {
       </div>
 
       {products.length > 0 && (
-        <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
+        <div className="mt-8 card">
           <h2 className="text-lg font-semibold mb-4">Productos con Stock Bajo</h2>
           {lowStock === 0 ? (
-            <p className="text-gray-500">Todos los productos tienen stock suficiente.</p>
+            <p className="text-muted-foreground">Todos los productos tienen stock suficiente.</p>
           ) : (
             <div className="space-y-2">
               {products
                 .filter((p) => p.stock < 10)
                 .map((p) => (
-                  <div key={p.id} className="flex justify-between items-center py-2 border-b last:border-0">
+                  <div key={p.id} className="flex justify-between items-center py-2 border-b border-border last:border-0">
                     <span className="font-medium">{p.name}</span>
                     <span className={`px-2 py-1 rounded text-sm font-medium ${
                       p.stock === 0 ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'

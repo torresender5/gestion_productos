@@ -1,8 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #334155;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #475569;
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
+  --color-muted: #F2F3F4;
+  --color-muted-foreground: #64748B;
+  --color-border: #E6E8EA;
+  --color-destructive: #DC2626;
+  --color-ring: #334155;
+  --color-surface: #FFFFFF;
+}
+
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .dark {
+    --color-primary: #1E293B;
+    --color-secondary: #334155;
+    --color-accent: #10B981;
+    --color-accent-hover: #059669;
+    --color-background: #0F172A;
+    --color-foreground: #F8FAFC;
+    --color-muted: #1E293B;
+    --color-muted-foreground: #94A3B8;
+    --color-border: #334155;
+    --color-surface: #1E293B;
+    color-scheme: dark;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+  }
+
+  .btn-primary {
+    @apply bg-accent text-white hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-muted text-foreground hover:bg-border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  .btn-danger {
+    @apply bg-destructive text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-surface rounded-xl border border-border p-6;
+  }
+
+  .input {
+    @apply w-full px-3 py-2.5 rounded-lg border border-border bg-surface text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors;
+  }
+
+  .label {
+    @apply text-sm font-medium text-foreground;
   }
 }
 

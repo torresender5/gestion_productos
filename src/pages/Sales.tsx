@@ -78,7 +78,7 @@ export default function Sales() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Ventas</h1>
-        <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">
           <Plus className="w-4 h-4" /> Nueva Venta
         </button>
       </div>
@@ -89,35 +89,35 @@ export default function Sales() {
 
       {loading && sales.length === 0 ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-          <span className="ml-2 text-gray-500">Cargando ventas...</span>
+          <Loader2 className="w-6 h-6 animate-spin text-accent" />
+          <span className="ml-2 text-muted-foreground">Cargando ventas...</span>
         </div>
       ) : (
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
+      <div className="card overflow-hidden overflow-x-auto p-0">
         <table className="w-full text-sm min-w-[600px]">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="text-left p-4 font-medium text-gray-600">Cliente</th>
-              <th className="text-left p-4 font-medium text-gray-600">Fecha</th>
-              <th className="text-right p-4 font-medium text-gray-600">Productos</th>
-              <th className="text-right p-4 font-medium text-gray-600">Subtotal</th>
-              <th className="text-right p-4 font-medium text-gray-600">IVA</th>
-              <th className="text-right p-4 font-medium text-gray-600">Total</th>
-              <th className="text-center p-4 font-medium text-gray-600">Estado</th>
-              <th className="text-right p-4 font-medium text-gray-600">Acciones</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Cliente</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Fecha</th>
+              <th className="text-right p-4 font-medium text-muted-foreground">Productos</th>
+              <th className="text-right p-4 font-medium text-muted-foreground">Subtotal</th>
+              <th className="text-right p-4 font-medium text-muted-foreground">IVA</th>
+              <th className="text-right p-4 font-medium text-muted-foreground">Total</th>
+              <th className="text-center p-4 font-medium text-muted-foreground">Estado</th>
+              <th className="text-right p-4 font-medium text-muted-foreground">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {sales.length === 0 ? (
-              <tr><td colSpan={8} className="p-8 text-center text-gray-500">No hay ventas registradas</td></tr>
+              <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">No hay ventas registradas</td></tr>
             ) : (
               [...sales].reverse().map((s) => (
-                <tr key={s.id} className="border-b last:border-0 hover:bg-gray-50">
+                <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/50">
                   <td className="p-4 font-medium">{s.client?.name || 'Cliente'}</td>
-                  <td className="p-4 text-gray-500">{formatDate(new Date(s.date))}</td>
+                  <td className="p-4 text-muted-foreground">{formatDate(new Date(s.date))}</td>
                   <td className="p-4 text-right">{s.items.length}</td>
                   <td className="p-4 text-right">{formatCurrency(s.subtotal)}</td>
-                  <td className="p-4 text-right text-gray-500">{formatCurrency(s.tax)}</td>
+                  <td className="p-4 text-right text-muted-foreground">{formatCurrency(s.tax)}</td>
                   <td className="p-4 text-right font-medium">{formatCurrency(s.total)}</td>
                   <td className="p-4 text-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -130,7 +130,7 @@ export default function Sales() {
                     <button
                       onClick={() => navigate(`/invoices?saleId=${s.id}`)}
                       title="Ver factura"
-                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"
+                      className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
                     >
                       <FileText className="w-4 h-4" />
                     </button>
@@ -147,59 +147,55 @@ export default function Sales() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Cliente *</label>
-              <select required value={clientId} onChange={(e) => setClientId(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <label className="label block mb-1">Cliente *</label>
+              <select required value={clientId} onChange={(e) => setClientId(e.target.value)} className="input">
                 <option value="">Seleccionar cliente...</option>
                 {clients.map((c) => <option key={c.id} value={c.id}>{c.name} - {c.document}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Fecha *</label>
-              <input required type="date" value={date} onChange={(e) => setDate(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="label block mb-1">Fecha *</label>
+              <input required type="date" value={date} onChange={(e) => setDate(e.target.value)} className="input" />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Estado de Pago *</label>
+            <label className="label block mb-1">Estado de Pago *</label>
             <div className="flex gap-3">
-              <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                paymentStatus === 'PAID' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-200 hover:border-gray-300'
-              }`}>
-                <input type="radio" name="paymentStatus" value="PAID" checked={paymentStatus === 'PAID'}
-                  onChange={() => setPaymentStatus('PAID')} className="sr-only" />
+              <button type="button" onClick={() => setPaymentStatus('PAID')}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 transition-all duration-200 ${
+                  paymentStatus === 'PAID' ? 'border-green-500 bg-green-50 text-green-700' : 'border-border text-muted-foreground hover:border-secondary'
+                }`}>
                 <span className="text-sm font-medium">Pagado</span>
-              </label>
-              <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                paymentStatus === 'PENDING' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-gray-200 hover:border-gray-300'
-              }`}>
-                <input type="radio" name="paymentStatus" value="PENDING" checked={paymentStatus === 'PENDING'}
-                  onChange={() => setPaymentStatus('PENDING')} className="sr-only" />
+              </button>
+              <button type="button" onClick={() => setPaymentStatus('PENDING')}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 transition-all duration-200 ${
+                  paymentStatus === 'PENDING' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-border text-muted-foreground hover:border-secondary'
+                }`}>
                 <span className="text-sm font-medium">Por Cobrar</span>
-              </label>
+              </button>
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium">Productos</label>
-              <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              <button type="button" onClick={addItem} className="text-sm text-accent hover:underline flex items-center gap-1">
                 <Plus className="w-3 h-3" /> Agregar producto
               </button>
             </div>
             {items.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center border rounded-lg">Agrega productos a la venta</p>
+              <p className="text-sm text-muted-foreground py-4 text-center border border-border rounded-lg">Agrega productos a la venta</p>
             ) : (
-              <div className="border rounded-lg overflow-hidden overflow-x-auto">
+              <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
                 <table className="w-full text-sm min-w-[600px]">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-muted">
                     <tr>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600">Producto</th>
-                      <th className="text-right p-3 text-xs font-medium text-gray-600">Stock</th>
-                      <th className="text-right p-3 text-xs font-medium text-gray-600">Cantidad</th>
-                      <th className="text-right p-3 text-xs font-medium text-gray-600">Precio Unit.</th>
-                      <th className="text-right p-3 text-xs font-medium text-gray-600">Subtotal</th>
+                      <th className="text-left p-3 text-xs font-medium text-muted-foreground">Producto</th>
+                      <th className="text-right p-3 text-xs font-medium text-muted-foreground">Stock</th>
+                      <th className="text-right p-3 text-xs font-medium text-muted-foreground">Cantidad</th>
+                      <th className="text-right p-3 text-xs font-medium text-muted-foreground">Precio Unit.</th>
+                      <th className="text-right p-3 text-xs font-medium text-muted-foreground">Subtotal</th>
                       <th className="p-3 w-10"></th>
                     </tr>
                   </thead>
@@ -207,26 +203,26 @@ export default function Sales() {
                     {items.map((item, i) => {
                       const product = products.find((p) => p.id === item.productId)
                       return (
-                        <tr key={i} className="border-t">
+                        <tr key={i} className="border-t border-border">
                           <td className="p-3">
                             <select value={item.productId} onChange={(e) => updateItem(i, 'productId', e.target.value)}
-                              className="w-full border rounded px-2 py-1 text-sm">
+                              className="input text-sm">
                               {products.filter((p) => p.stock > 0).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                             </select>
                           </td>
-                          <td className="p-3 text-right text-gray-500">{product?.stock || 0}</td>
+                          <td className="p-3 text-right text-muted-foreground">{product?.stock || 0}</td>
                           <td className="p-3">
                             <input type="number" min={1} max={product?.stock || 1} value={item.quantity}
                               onChange={(e) => updateItem(i, 'quantity', Number(e.target.value))}
-                              className="w-20 border rounded px-2 py-1 text-sm text-right ml-auto block" />
+                              className="input w-20 ml-auto block text-right" />
                           </td>
                           <td className="p-3">
                             <input type="number" min={0} value={item.unitPrice} onChange={(e) => updateItem(i, 'unitPrice', Number(e.target.value))}
-                              className="w-28 border rounded px-2 py-1 text-sm text-right ml-auto block" />
+                              className="input w-28 ml-auto block text-right" />
                           </td>
                           <td className="p-3 text-right font-medium">{formatCurrency(item.subtotal ?? 0)}</td>
                           <td className="p-3">
-                            <button type="button" onClick={() => removeItem(i)} className="text-red-500 hover:text-red-700">
+                            <button type="button" onClick={() => removeItem(i)} className="text-destructive hover:text-red-700 transition-colors">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
@@ -239,16 +235,15 @@ export default function Sales() {
             )}
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 space-y-1 text-sm">
+          <div className="bg-muted rounded-lg p-4 space-y-1 text-sm">
             <div className="flex justify-between"><span>Subtotal:</span><span>{formatCurrency(subtotal)}</span></div>
-            <div className="flex justify-between text-gray-500"><span>IVA (19%):</span><span>{formatCurrency(tax)}</span></div>
-            <div className="flex justify-between text-lg font-bold border-t pt-2"><span>Total:</span><span>{formatCurrency(total)}</span></div>
+            <div className="flex justify-between text-muted-foreground"><span>IVA (19%):</span><span>{formatCurrency(tax)}</span></div>
+            <div className="flex justify-between text-lg font-bold border-t border-border pt-2"><span>Total:</span><span>{formatCurrency(total)}</span></div>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-end gap-3">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button>
-            <button type="submit" disabled={items.length === 0 || !clientId}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+            <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-secondary">Cancelar</button>
+            <button type="submit" disabled={items.length === 0 || !clientId} className="btn btn-primary">
               Registrar Venta
             </button>
           </div>

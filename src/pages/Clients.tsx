@@ -44,15 +44,15 @@ export default function Clients() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Clientes</h1>
-        <button onClick={openCreate} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        <button onClick={openCreate} className="btn btn-primary">
           <Plus className="w-4 h-4" /> Nuevo Cliente
         </button>
       </div>
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <input type="text" placeholder="Buscar por nombre o documento..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          className="input pl-10" />
       </div>
 
       {error && (
@@ -61,37 +61,37 @@ export default function Clients() {
 
       {loading && clients.length === 0 ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-          <span className="ml-2 text-gray-500">Cargando clientes...</span>
+          <Loader2 className="w-6 h-6 animate-spin text-accent" />
+          <span className="ml-2 text-muted-foreground">Cargando clientes...</span>
         </div>
       ) : (
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
+      <div className="card overflow-hidden overflow-x-auto p-0">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="text-left p-4 font-medium text-gray-600">Nombre</th>
-              <th className="text-left p-4 font-medium text-gray-600">Documento</th>
-              <th className="text-left p-4 font-medium text-gray-600">Email</th>
-              <th className="text-left p-4 font-medium text-gray-600">Teléfono</th>
-              <th className="text-left p-4 font-medium text-gray-600">Dirección</th>
-              <th className="text-right p-4 font-medium text-gray-600">Acciones</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Nombre</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Documento</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Email</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Teléfono</th>
+              <th className="text-left p-4 font-medium text-muted-foreground">Dirección</th>
+              <th className="text-right p-4 font-medium text-muted-foreground">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={6} className="p-8 text-center text-gray-500">No hay clientes</td></tr>
+              <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No hay clientes</td></tr>
             ) : (
               filtered.map((c) => (
-                <tr key={c.id} className="border-b last:border-0 hover:bg-gray-50">
+                <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/50">
                   <td className="p-4 font-medium">{c.name}</td>
-                  <td className="p-4 text-gray-500">{c.document}</td>
-                  <td className="p-4 text-gray-500">{c.email}</td>
-                  <td className="p-4 text-gray-500">{c.phone}</td>
-                  <td className="p-4 text-gray-500 max-w-48 truncate">{c.address}</td>
+                  <td className="p-4 text-muted-foreground">{c.document}</td>
+                  <td className="p-4 text-muted-foreground">{c.email}</td>
+                  <td className="p-4 text-muted-foreground">{c.phone}</td>
+                  <td className="p-4 text-muted-foreground max-w-48 truncate">{c.address}</td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><Edit className="w-4 h-4" /></button>
-                      <button onClick={() => deleteClient(c.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-colors"><Edit className="w-4 h-4" /></button>
+                      <button onClick={() => deleteClient(c.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -106,36 +106,31 @@ export default function Clients() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Nombre *</label>
-              <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="label block mb-1">Nombre *</label>
+              <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="input" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">NIT / Cédula *</label>
-              <input required type="text" value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="label block mb-1">NIT / Cédula *</label>
+              <input required type="text" value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })} className="input" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="label block mb-1">Email</label>
+              <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="input" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Teléfono</label>
-              <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="label block mb-1">Teléfono</label>
+              <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="input" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Dirección</label>
-            <input type="text" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="label block mb-1">Dirección</label>
+            <input type="text" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="input" />
           </div>
           <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">{editingId ? 'Actualizar' : 'Crear'}</button>
+            <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-secondary">Cancelar</button>
+            <button type="submit" className="btn btn-primary">{editingId ? 'Actualizar' : 'Crear'}</button>
           </div>
         </form>
       </Modal>

@@ -134,6 +134,18 @@ export interface SaleItem {
   subtotal?: number
 }
 
+export interface SaleItemWithProduct {
+  id: string
+  productId: string
+  quantity: number
+  unitPrice: number
+  subtotal: number
+  product?: {
+    id: string
+    name: string
+  }
+}
+
 export interface Sale {
   id: string
   clientId: string
@@ -168,13 +180,16 @@ export interface Invoice {
   clientDocument?: string
   clientAddress?: string
   date: Date
-  items: SaleItem[]
   subtotal: number
   tax: number
   total: number
   status: 'PAID' | 'PENDING'
   createdAt: Date
   updatedAt: Date
+  sale?: {
+    id: string
+    items: SaleItemWithProduct[]
+  }
 }
 
 export interface PaginatedResponse<T> {
