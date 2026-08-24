@@ -17,7 +17,7 @@ export function formatCurrency(amount: number): string {
   }).format(amount)
 }
 
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string | Date): string {
   return new Date(dateStr).toLocaleDateString('es-CO', {
     year: 'numeric',
     month: 'short',

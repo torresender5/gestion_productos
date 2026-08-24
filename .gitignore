@@ -17,3 +17,5 @@ yarn-error.log*
 # OS / build artifacts
 .DS_Store
 *.tsbuildinfo
+
+AGENTS.md
