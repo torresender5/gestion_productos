@@ -1,12 +1,40 @@
+export interface PaginationMeta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  meta: PaginationMeta
+}
+
+export interface ProductQueryParams {
+  page?: number
+  limit?: number
+  search?: string
+  category?: string
+}
+
+export interface ProductSize {
+  size: string
+  stock?: number
+}
+
 export interface Product {
   id: string
   name: string
   description: string
+  code: string
+  type: string
   sku: string
   category: string
   purchasePrice: number
   salePrice: number
   stock: number
+  image?: string | null
+  sizes?: ProductSize[] | null
   createdAt: string
 }
 

@@ -10,6 +10,8 @@ interface AuthStore {
   users: User[]
   loading: boolean
   error: string | null
+  hydrated: boolean
+  hydrate: () => Promise<void>
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>
   register: (name: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>
   logout: () => void
@@ -23,6 +25,16 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
   users: [],
   loading: false,
   error: null,
+  hydrated: false,
+
+  hydrate: async () => {
+    const user = authService.getTokenFromStorage()
+    if (user) {
+      set({ user, hydrated: true })
+    } else {
+      set({ hydrated: true })
+    }
+  },
 
   login: async (email, password) => {
     set({ loading: true, error: null })
@@ -40,7 +52,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
   register: async (name, email, password) => {
     set({ loading: true, error: null })
     try {
-      const { user } = await authService.register({ name, email, password })
+      const { user } = await authService.register({ user: name, email, password })
       set({ user, loading: false })
       return { ok: true }
     } catch (err: any) {

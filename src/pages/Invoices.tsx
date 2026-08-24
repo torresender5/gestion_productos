@@ -81,10 +81,10 @@ export default function Invoices() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 no-print">Facturas</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6 no-print">Facturas</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border p-4 mb-4 no-print space-y-3">
+      <div className="bg-white rounded-2xl shadow-sm p-4 mb-4 no-print space-y-3">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
@@ -94,7 +94,7 @@ export default function Invoices() {
               placeholder="Buscar por cliente o N° factura..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 bg-white border-0 rounded-xl shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
 
@@ -102,7 +102,7 @@ export default function Invoices() {
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value as PeriodFilter)}
-            className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-white border-0 rounded-xl shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
           >
             <option value="all">Todos los períodos</option>
             <option value="day">Hoy</option>
@@ -114,7 +114,7 @@ export default function Invoices() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-white border-0 rounded-xl shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
           >
             <option value="all">Todos los estados</option>
             <option value="paid">Pagada</option>
@@ -122,7 +122,7 @@ export default function Invoices() {
           </select>
 
           {hasActiveFilters && (
-            <button onClick={clearFilters} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border rounded-lg hover:bg-gray-50">
+            <button onClick={clearFilters} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">
               <X className="w-3.5 h-3.5" /> Limpiar
             </button>
           )}
@@ -133,32 +133,32 @@ export default function Invoices() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto no-print">
+      <div className="bg-white rounded-2xl shadow-sm overflow-hidden overflow-x-auto no-print">
         <table className="w-full text-sm min-w-[650px]">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-gray-50/80">
             <tr>
-              <th className="text-left p-4 font-medium text-gray-600">N° Factura</th>
-              <th className="text-left p-4 font-medium text-gray-600">Cliente</th>
-              <th className="text-left p-4 font-medium text-gray-600">Fecha</th>
-              <th className="text-right p-4 font-medium text-gray-600">Total</th>
-              <th className="text-center p-4 font-medium text-gray-600">Estado</th>
-              <th className="text-right p-4 font-medium text-gray-600">Acciones</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">N° Factura</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Cliente</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Fecha</th>
+              <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Total</th>
+              <th className="text-center px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Estado</th>
+              <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 ? (
               <tr><td colSpan={6} className="p-8 text-center text-gray-500">{invoices.length === 0 ? 'No hay facturas generadas. Las facturas se crean automáticamente al registrar una venta.' : 'No se encontraron facturas con los filtros aplicados.'}</td></tr>
             ) : (
               [...filtered].reverse().map((inv) => (
-                <tr key={inv.id} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="p-4 font-mono font-medium text-blue-600">{inv.invoiceNumber}</td>
-                  <td className="p-4">{inv.clientName}</td>
-                  <td className="p-4 text-gray-500">{formatDate(inv.date)}</td>
-                  <td className="p-4 text-right font-medium">{formatCurrency(inv.total)}</td>
-                  <td className="p-4 text-center">
+                <tr key={inv.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 font-mono font-medium text-blue-600">{inv.invoiceNumber}</td>
+                  <td className="px-6 py-4">{inv.clientName}</td>
+                  <td className="px-6 py-4 text-gray-500">{formatDate(inv.date)}</td>
+                  <td className="px-6 py-4 text-right font-medium">{formatCurrency(inv.total)}</td>
+                  <td className="px-6 py-4 text-center">
                     <button
                       onClick={() => updateInvoiceStatus(inv.id, inv.status === 'paid' ? 'pending' : 'paid')}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
                         inv.status === 'paid'
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
                           : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
@@ -168,7 +168,7 @@ export default function Invoices() {
                       {inv.status === 'paid' ? 'Pagada' : 'Pendiente'}
                     </button>
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="px-6 py-4 text-right">
                     <button onClick={() => setSelectedInvoice(inv)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500">
                       <Eye className="w-4 h-4" />
                     </button>
@@ -210,21 +210,21 @@ export default function Invoices() {
 
             <div className="overflow-x-auto">
             <table className="w-full text-sm mb-6 min-w-[400px]">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50/80">
                 <tr>
-                  <th className="text-left p-3 font-medium text-gray-600">Producto</th>
-                  <th className="text-right p-3 font-medium text-gray-600">Cantidad</th>
-                  <th className="text-right p-3 font-medium text-gray-600">Precio Unit.</th>
-                  <th className="text-right p-3 font-medium text-gray-600">Subtotal</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Producto</th>
+                  <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Cantidad</th>
+                  <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Precio Unit.</th>
+                  <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Subtotal</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-100">
                 {selectedInvoice.items.map((item, i) => (
-                  <tr key={i} className="border-t">
-                    <td className="p-3">{item.productName}</td>
-                    <td className="p-3 text-right">{item.quantity}</td>
-                    <td className="p-3 text-right">{formatCurrency(item.unitPrice)}</td>
-                    <td className="p-3 text-right">{formatCurrency(item.subtotal)}</td>
+                  <tr key={i}>
+                    <td className="px-6 py-4">{item.productName}</td>
+                    <td className="px-6 py-4 text-right">{item.quantity}</td>
+                    <td className="px-6 py-4 text-right">{formatCurrency(item.unitPrice)}</td>
+                    <td className="px-6 py-4 text-right">{formatCurrency(item.subtotal)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -247,10 +247,10 @@ export default function Invoices() {
             </div>
 
             <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t no-print">
-              <button onClick={() => setSelectedInvoice(null)} className="px-4 py-2 border rounded-lg hover:bg-gray-50">
+              <button onClick={() => setSelectedInvoice(null)} className="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors text-sm font-medium">
                 Cerrar
               </button>
-              <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all shadow-lg shadow-violet-500/25 text-sm font-medium">
                 <Printer className="w-4 h-4" /> Imprimir
               </button>
             </div>

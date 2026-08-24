@@ -83,35 +83,40 @@ export default function UserManagement() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Gestión de Usuarios</h1>
-        <span className="text-sm text-gray-500">{users.length} usuario{users.length !== 1 ? 's' : ''}</span>
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
+            <p className="text-sm text-gray-500 mt-1">Administra las cuentas y permisos del sistema</p>
+          </div>
+          <span className="text-sm text-gray-500">{users.length} usuario{users.length !== 1 ? 's' : ''}</span>
+        </div>
       </div>
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input type="text" placeholder="Buscar por nombre o email..." value={search} onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          className="w-full pl-10 pr-4 py-2 bg-white border-0 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm transition-all" />
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
+      <div className="bg-white rounded-2xl shadow-sm overflow-hidden overflow-x-auto">
         <table className="w-full text-sm min-w-[600px]">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-gray-50/80">
             <tr>
-              <th className="text-left p-4 font-medium text-gray-600">Usuario</th>
-              <th className="text-left p-4 font-medium text-gray-600">Email</th>
-              <th className="text-center p-4 font-medium text-gray-600">Rol</th>
-              <th className="text-left p-4 font-medium text-gray-600">Registrado</th>
-              <th className="text-right p-4 font-medium text-gray-600">Acciones</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Usuario</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Email</th>
+              <th className="text-center px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Rol</th>
+              <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Registrado</th>
+              <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 ? (
-              <tr><td colSpan={5} className="p-8 text-center text-gray-500">No se encontraron usuarios</td></tr>
+              <tr><td colSpan={5} className="px-6 py-4 text-center text-gray-500">No se encontraron usuarios</td></tr>
             ) : (
               filtered.map((u) => (
-                <tr key={u.id} className="border-b last:border-0 hover:bg-gray-50">
-                  <td className="p-4">
+                <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <UserCircle className="w-8 h-8 text-gray-300 shrink-0" />
                       <div>
@@ -122,8 +127,8 @@ export default function UserManagement() {
                       </div>
                     </div>
                   </td>
-                  <td className="p-4 text-gray-500">{u.email}</td>
-                  <td className="p-4 text-center">
+                  <td className="px-6 py-4 text-gray-500">{u.email}</td>
+                  <td className="px-6 py-4 text-center">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
                       u.role === 'admin'
                         ? 'bg-purple-100 text-purple-700'
@@ -133,8 +138,8 @@ export default function UserManagement() {
                       {u.role === 'admin' ? 'Admin' : 'Usuario'}
                     </span>
                   </td>
-                  <td className="p-4 text-gray-500">{formatDate(u.createdAt)}</td>
-                  <td className="p-4 text-right">
+                  <td className="px-6 py-4 text-gray-500">{formatDate(u.createdAt)}</td>
+                  <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500" title="Editar">
                         <Edit className="w-4 h-4" />
@@ -156,41 +161,41 @@ export default function UserManagement() {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Editar Usuario">
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3">
+            <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-2xl p-3">
               {error}
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Nombre *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nombre *</label>
               <input required type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm transition-all" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Email *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email *</label>
               <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm transition-all" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Rol</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Rol</label>
               <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm transition-all">
                 <option value="admin">Administrador</option>
                 <option value="user">Usuario</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Nueva contraseña</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Nueva contraseña</label>
               <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="Dejar vacío para no cambiar"
-                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm transition-all" />
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar Cambios</button>
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors text-sm font-medium">Cancelar</button>
+            <button type="submit" className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all shadow-lg shadow-violet-500/25 text-sm font-medium">Guardar Cambios</button>
           </div>
         </form>
       </Modal>

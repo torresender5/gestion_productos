@@ -9,48 +9,71 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
-  user: AuthUser
-  token: string
+  access_token?: string
+  token?: string
 }
 
 export interface RegisterDto {
-  user?: string
-  name?: string
+  user: string
   email: string
   password: string
 }
 
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const base64 = token.split('.')[1]
+    const json = atob(base64.replace(/-/g, '+').replace(/_/g, '/'))
+    return JSON.parse(json)
+  } catch {
+    return null
+  }
+}
+
+function userFromToken(token: string): AuthUser | null {
+  const payload = decodeJwtPayload(token)
+  if (!payload) return null
+  return {
+    id: String(payload.sub ?? ''),
+    name: String(payload.name ?? ''),
+    email: String(payload.email ?? ''),
+    role: 'user',
+    createdAt: '',
+  }
+}
+
 export const authService = {
-  login: async (email: string, password: string): Promise<LoginResponse> => {
+  login: async (email: string, password: string): Promise<{ user: AuthUser; token: string }> => {
     const { data } = await api.post<LoginResponse>('/auth/login', { email, password })
-    if (data.token) {
-      localStorage.setItem('auth-token', data.token)
-    }
-    return data
+    const token = data.access_token || data.token
+    if (!token) throw new Error('No se recibió token')
+    localStorage.setItem('auth-token', token)
+    const user = userFromToken(token)
+    if (!user) throw new Error('Token inválido')
+    return { user, token }
   },
 
-  register: async (dto: RegisterDto): Promise<LoginResponse> => {
-    try {
-      dto.user = dto.name
-      const { data } = await api.post<LoginResponse>('/auth/register', dto)
-      console.log(data)
-      if (data.token) {
-        localStorage.setItem('auth-token', data.token)
-      }
-      return data
-    } catch (error) {
-      console.error('Registration error:', error)
-      throw error
-    }
+  register: async (dto: RegisterDto): Promise<{ user: AuthUser; token: string }> => {
+    await api.post('/auth/register', dto)
+    const { data } = await api.post<LoginResponse>('/auth/login', {
+      email: dto.email,
+      password: dto.password,
+    })
+    const token = data.access_token || data.token
+    if (!token) throw new Error('No se recibió token')
+    localStorage.setItem('auth-token', token)
+    const user = userFromToken(token)
+    if (!user) throw new Error('Token inválido')
+    return { user, token }
   },
 
   logout: () => {
     localStorage.removeItem('auth-token')
   },
 
-  getMe: async (): Promise<AuthUser> => {
-    const { data } = await api.get<AuthUser>('/auth/me')
-    return data
+  getTokenFromStorage: (): AuthUser | null => {
+    const token = localStorage.getItem('auth-token')
+    if (!token) return null
+    return userFromToken(token)
   },
 
   getUsers: async (): Promise<AuthUser[]> => {

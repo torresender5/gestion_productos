@@ -32,7 +32,7 @@ export default function AccountsPayable() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Cuentas por Pagar</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Cuentas por Pagar</h1>
         <div className="text-right">
           <p className="text-sm text-gray-500">Total adeudado</p>
           <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalDebt)}</p>
@@ -40,14 +40,14 @@ export default function AccountsPayable() {
       </div>
 
       {groupedBySupplier.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border p-8 text-center text-gray-500">
+        <div className="bg-white rounded-2xl shadow-sm p-8 text-center text-gray-500">
           No hay cuentas por pagar pendientes.
         </div>
       ) : (
         <div className="space-y-4">
           {groupedBySupplier.map(({ supplier, total, purchases: supplierPurchases }) => (
-            <div key={supplier} className="bg-white rounded-xl shadow-sm border overflow-hidden">
-              <div className="flex items-center justify-between p-4 bg-orange-50 border-b">
+            <div key={supplier} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between p-4 bg-orange-50/80">
                 <div>
                   <h2 className="font-semibold text-lg">{supplier}</h2>
                   <p className="text-sm text-gray-500">{supplierPurchases.length} compra(s) pendiente(s)</p>
@@ -56,24 +56,24 @@ export default function AccountsPayable() {
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm min-w-[500px]">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50/80">
                     <tr>
-                      <th className="text-left p-3 text-xs font-medium text-gray-600">Fecha</th>
-                      <th className="text-right p-3 text-xs font-medium text-gray-600">Productos</th>
-                      <th className="text-right p-3 text-xs font-medium text-gray-600">Total</th>
-                      <th className="text-center p-3 text-xs font-medium text-gray-600">Acción</th>
+                      <th className="text-left px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Fecha</th>
+                      <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Productos</th>
+                      <th className="text-right px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Total</th>
+                      <th className="text-center px-6 py-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Acción</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {supplierPurchases.map((p) => (
-                      <tr key={p.id} className="border-t hover:bg-gray-50">
-                        <td className="p-3">{formatDate(p.date)}</td>
-                        <td className="p-3 text-right">{p.items.length}</td>
-                        <td className="p-3 text-right font-medium">{formatCurrency(p.total)}</td>
-                        <td className="p-3 text-center">
+                      <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4">{formatDate(p.date)}</td>
+                        <td className="px-6 py-4 text-right">{p.items.length}</td>
+                        <td className="px-6 py-4 text-right font-medium">{formatCurrency(p.total)}</td>
+                        <td className="px-6 py-4 text-center">
                           <button
                             onClick={() => updatePurchasePaymentStatus(p.id, 'paid')}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-green-100 text-green-700 rounded-xl hover:bg-green-200 transition-colors"
                           >
                             <CheckCircle className="w-3.5 h-3.5" />
                             Marcar pagado

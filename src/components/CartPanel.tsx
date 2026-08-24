@@ -52,22 +52,22 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
     <>
       {/* Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={onClose} />
       )}
 
       {/* Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-xl flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-blue-600" />
+            <ShoppingBag className="w-5 h-5 text-violet-600" />
             <h2 className="text-lg font-semibold">Carrito de Venta</h2>
             {itemCount > 0 && (
-              <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">{itemCount}</span>
+              <span className="bg-violet-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">{itemCount}</span>
             )}
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100">
@@ -87,11 +87,11 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
             {/* Cart items */}
             <div className="p-4 space-y-3">
               {items.map((item) => (
-                <div key={item.productId} className="flex gap-3 items-start bg-gray-50 rounded-lg p-3">
+                <div key={item.productId} className="flex gap-3 items-start bg-gray-50 rounded-xl p-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{item.productName}</p>
                     <p className="text-xs text-gray-500 mt-0.5">{formatCurrency(item.unitPrice)} c/u</p>
-                    <p className="text-sm font-semibold text-blue-600 mt-1">
+                    <p className="text-sm font-semibold text-violet-600 mt-1">
                       {formatCurrency(item.unitPrice * item.quantity)}
                     </p>
                   </div>
@@ -99,7 +99,7 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
                     <button
                       onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                       disabled={item.quantity <= 1}
-                      className="p-1 rounded bg-white border hover:bg-gray-50 disabled:opacity-30"
+                      className="p-1 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-30"
                     >
                       <Minus className="w-3 h-3" />
                     </button>
@@ -107,14 +107,14 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
                     <button
                       onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                       disabled={item.quantity >= item.maxStock}
-                      className="p-1 rounded bg-white border hover:bg-gray-50 disabled:opacity-30"
+                      className="p-1 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-30"
                     >
                       <Plus className="w-3 h-3" />
                     </button>
                   </div>
                   <button
                     onClick={() => removeItem(item.productId)}
-                    className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded"
+                    className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -123,13 +123,13 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
             </div>
 
             {/* Client & payment selection */}
-            <div className="p-4 border-t space-y-3">
+            <div className="p-4 border-t border-gray-100 space-y-3">
               <div>
-                <label className="block text-sm font-medium mb-1">Cliente *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Cliente *</label>
                 <select
                   value={clientId}
                   onChange={(e) => setClientId(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
                 >
                   <option value="">Seleccionar cliente...</option>
                   {clients.map((c) => (
@@ -139,12 +139,12 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Estado de Pago</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Estado de Pago</label>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => setPaymentStatus('paid')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-lg border-2 transition-colors ${
+                    className={`flex-1 py-2 text-sm font-medium rounded-xl border-2 transition-colors ${
                       paymentStatus === 'paid'
                         ? 'border-green-500 bg-green-50 text-green-700'
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
@@ -155,7 +155,7 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
                   <button
                     type="button"
                     onClick={() => setPaymentStatus('pending')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-lg border-2 transition-colors ${
+                    className={`flex-1 py-2 text-sm font-medium rounded-xl border-2 transition-colors ${
                       paymentStatus === 'pending'
                         ? 'border-orange-500 bg-orange-50 text-orange-700'
                         : 'border-gray-200 text-gray-500 hover:border-gray-300'
@@ -171,7 +171,7 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
 
         {/* Footer totals & finalize */}
         {items.length > 0 && (
-          <div className="border-t p-4 space-y-3">
+          <div className="border-t border-gray-100 p-4 space-y-3">
             <div className="space-y-1 text-sm">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
@@ -181,7 +181,7 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
                 <span>IVA (19%)</span>
                 <span>{formatCurrency(tax)}</span>
               </div>
-              <div className="flex justify-between text-lg font-bold border-t pt-2">
+              <div className="flex justify-between text-lg font-bold border-t border-gray-100 pt-2">
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
               </div>
@@ -190,14 +190,14 @@ export default function CartPanel({ isOpen, onClose }: CartPanelProps) {
             <div className="flex gap-2">
               <button
                 onClick={clear}
-                className="px-4 py-2.5 text-sm border rounded-lg text-gray-600 hover:bg-gray-50"
+                className="px-4 py-2.5 text-sm bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 transition-colors font-medium"
               >
                 Vaciar
               </button>
               <button
                 onClick={handleFinalize}
                 disabled={!clientId}
-                className="flex-1 py-2.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className="flex-1 py-2.5 text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-violet-500/25"
               >
                 Finalizar Venta
               </button>

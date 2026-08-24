@@ -1,11 +1,11 @@
 import api from '../lib/api'
-import type { Product } from '../types'
+import type { Product, PaginatedResponse, ProductQueryParams } from '../types'
 
 export type CreateProductDto = Omit<Product, 'id' | 'createdAt'>
 
 export const productService = {
-  getAll: async (): Promise<Product[]> => {
-    const { data } = await api.get<Product[]>('/products')
+  getAll: async (params: ProductQueryParams = {}): Promise<PaginatedResponse<Product>> => {
+    const { data } = await api.get<PaginatedResponse<Product>>('/products', { params })
     return data
   },
 

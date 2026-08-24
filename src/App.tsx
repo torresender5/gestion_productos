@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -13,8 +14,14 @@ import AccountsReceivable from './pages/AccountsReceivable'
 import UserManagement from './pages/UserManagement'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import { useAuthStore } from './stores/authStore'
 
 export default function App() {
+  const hydrate = useAuthStore((s) => s.hydrate)
+
+  useEffect(() => {
+    hydrate()
+  }, [hydrate])
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
